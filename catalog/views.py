@@ -1,25 +1,27 @@
+from django.views.generic import ListView, DetailView, TemplateView
 from django.shortcuts import render
 from .models import Products
 
 
-def home(request):
-    products = Products.objects.all()
-    return render(request, 'catalog/home.html', {'products': products})
+class HomeListView(ListView):
+    model = Products
+    template_name = 'catalog/home.html'
+    context_object_name = 'products'
 
 
-def contact(request):
-    if request.method == 'POST':
+class ContactListView(TemplateView):
+    template_name = 'catalog/contact.html'
+
+    def post(self, request, *args, **kwargs):
         name = request.POST.get('name')
         phone = request.POST.get('phone')
         message = request.POST.get('message')
         print(f'Пользователь с именем: {name}\nДля связи оставил телефон: {phone}\nОставил сообщение: {message}')
-    return render(request, 'catalog/contact.html')
+        return render(request, self.template_name)
 
 
-def product_detail(request, pk):
-    # Получаем объект товара по его PrimaryKey (id)
-    product = Products.objects.get(pk=pk)
-    # Формируем контекст для передачи в шаблон
-    context = {'product': product}
-    # Отображаем страницу с информацией о товаре
-    return render(request, 'catalog/product_detail.html', context)
+class ProductDetailView(DetailView):
+    model = Products
+    template_name = 'catalog/product_detail.html'
+    context_object_name = 'product'
+    pk_url_kwarg = 'pk'
