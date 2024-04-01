@@ -1,0 +1,12 @@
+{% extends 'catalog/base.html' %}
+
+{% block content %}
+<form method="post">
+    {% csrf_token %}
+    <p>Вы точно хотите удалить блог <b>{{ object.title }}</b> ?</p>
+    <div class="btn-group">
+        <button type="submit" class="btn btn-danger">Удалить</button>
+        <a href="{% url 'blog:list'%}" class="btn btn-warning">Отмена</a>
+    </div>
+</form>
+{% endblock %}
