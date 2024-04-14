@@ -4,25 +4,41 @@
 {% block title %}Создание продукта - Skystore{% endblock %}
 
 {% block content %}
-<header>
-    <!-- Заголовок страницы -->
-    <!-- Ваш заголовок здесь -->
-</header>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Создание нового продукта</div>
 
-<main role="main">
-    <section class="container">
-        <h1>Создание нового продукта</h1>
-        <!-- Форма для создания продукта -->
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Создать</button>
-        </form>
-    </section>
-</main>
-
-<footer class="text-muted">
-    <!-- Футер страницы -->
-    <!-- Ваш футер здесь -->
-</footer>
+                <div class="card-body">
+                    <!-- Форма для создания продукта -->
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
+                        {% for field in form.visible_fields %}
+                            {% if field.name != 'version_number' and field.name != 'version_name' %}
+                                <div class="form-group mb-3">
+                                    {{ field.label_tag }}
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <div class="form-group mb-3">
+                            <label for="id_version_number">Номер версии:</label>
+                            {{ form.version_number }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="id_version_name">Название версии:</label>
+                            {{ form.version_name }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Создать</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

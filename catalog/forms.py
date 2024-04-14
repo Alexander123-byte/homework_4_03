@@ -1,8 +1,10 @@
 from django import forms
-from .models import Products
+from .models import Products, Version
 
 
 class ProductForm(forms.ModelForm):
+    version_number = forms.CharField(max_length=50, label='Номер версии')
+    version_name = forms.CharField(max_length=100, label='Название версии')
     class Meta:
         model = Products
         fields = ['name_product', 'description_product', 'image', 'category', 'price',]
@@ -14,6 +16,19 @@ class ProductForm(forms.ModelForm):
         self.fields['image'].required = True
         self.fields['category'].required = True
         self.fields['price'].required = True
+
+    def save(self, commit=True):
+        product = super().save(commit=False)
+        if commit:
+            product.save()
+            # Создаем новую версию и связываем ее с этим продуктом
+            Version.objects.create(
+                product=product,
+                version_number=self.cleaned_data['version_number'],
+                version_name=self.cleaned_data['version_name'],
+                is_current=True
+            )
+        return product
 
     def clean_name_product(self):
         name_product = self.cleaned_data.get('name_product')
