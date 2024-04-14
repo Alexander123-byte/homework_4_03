@@ -1,0 +1,28 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+
+{% block title %}Создание продукта - Skystore{% endblock %}
+
+{% block content %}
+<header>
+    <!-- Заголовок страницы -->
+    <!-- Ваш заголовок здесь -->
+</header>
+
+<main role="main">
+    <section class="container">
+        <h1>Создание нового продукта</h1>
+        <!-- Форма для создания продукта -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Создать</button>
+        </form>
+    </section>
+</main>
+
+<footer class="text-muted">
+    <!-- Футер страницы -->
+    <!-- Ваш футер здесь -->
+</footer>
+{% endblock %}

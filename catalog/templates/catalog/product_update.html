@@ -1,0 +1,28 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+
+{% block title %}Редактирование продукта - Skystore{% endblock %}
+
+{% block content %}
+<header>
+    <!-- Заголовок страницы -->
+    <!-- Ваш заголовок здесь -->
+</header>
+
+<main role="main">
+    <section class="container">
+        <h1>Редактирование продукта "{{ product.name_product }}"</h1>
+        <!-- Форма для обновления продукта -->
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+        </form>
+    </section>
+</main>
+
+<footer class="text-muted">
+    <!-- Футер страницы -->
+    <!-- Ваш футер здесь -->
+</footer>
+{% endblock %}
