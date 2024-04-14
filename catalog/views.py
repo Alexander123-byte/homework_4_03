@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView
 from django.shortcuts import render
 from .models import Products, Version
-from .forms import ProductForm
+from .forms import ProductForm, VersionForm
 
 
 class HomeListView(ListView):
@@ -63,3 +63,15 @@ class ProductUpdateView(UpdateView):
             initial['version_number'] = current_version.version_number
             initial['version_name'] = current_version.version_name
         return initial
+
+
+class VersionCreateView(CreateView):
+    model = Version
+    form_class = VersionForm
+    template_name = 'catalog/version_create.html'
+    success_url = '/'
+
+    def form_valid(self, form):
+        form.instance.product_id = self.kwargs['pk']
+        return super().form_valid(form)
+

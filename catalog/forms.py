@@ -2,9 +2,20 @@ from django import forms
 from .models import Products, Version
 
 
+class VersionForm(forms.ModelForm):
+    class Meta:
+        model = Version
+        fields = ['version_number', 'version_name', 'is_current']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['is_current'].widget.attrs.update({'class': 'form-check-input'})
+
+
 class ProductForm(forms.ModelForm):
     version_number = forms.CharField(max_length=50, label='Номер версии')
     version_name = forms.CharField(max_length=100, label='Название версии')
+
     class Meta:
         model = Products
         fields = ['name_product', 'description_product', 'image', 'category', 'price',]
