@@ -2,9 +2,10 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 
+from blog.apps import BlogConfig
 from blog.views import BlogCreateView, BlogListView, BlogDetailView, BlogUpdateView, BlogDeleteView
 
-app_name = 'blog'
+app_name = BlogConfig.name
 
 urlpatterns = [
     path('create/', BlogCreateView.as_view(), name='create'),
