@@ -6,11 +6,11 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import CreateView, FormView
+from django.views.generic import CreateView, FormView, UpdateView
 from django.urls import reverse_lazy, reverse
 from django.conf import settings
 
-from users.forms import UserRegisterForm
+from users.forms import UserRegisterForm, UserProfileForm
 from users.models import User
 
 from config.settings import EMAIL_HOST_USER
@@ -20,6 +20,7 @@ class UserCreateView(CreateView):
     model = User
     form_class = UserRegisterForm
     success_url = reverse_lazy('users:login')
+    template_name = 'users/register_form.html'
 
     def form_valid(self, form):
         user = form.save(commit=False)
@@ -69,3 +70,12 @@ class PasswordResetView(FormView):
             fail_silently=False,
         )
         return super().form_valid(form)
+
+
+class ProfileView(UpdateView):
+    model = User
+    form_class = UserProfileForm
+    success_url = '/'
+
+    def get_object(self, queryset=None):
+        return self.request.user
