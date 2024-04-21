@@ -31,6 +31,7 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Products
         fields = ['name_product', 'description_product', 'image', 'category', 'price',]
+        exclude = ("owner",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView
 from django.shortcuts import render
 from .models import Products, Version
@@ -38,11 +39,18 @@ class ProductDetailView(DetailView):
     pk_url_kwarg = 'pk'
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(CreateView, LoginRequiredMixin):
     model = Products
     form_class = ProductForm
     template_name = 'catalog/product_create.html'
     success_url = '/'
+
+    def form_valid(self, form):
+        product = form.save()
+        user = self.request.user
+        product.owner = user
+        product.save()
+        return super().form_valid(form)
 
 
 class ProductUpdateView(UpdateView):
