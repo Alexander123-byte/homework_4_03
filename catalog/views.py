@@ -1,8 +1,14 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView
 from django.shortcuts import render
 from .models import Products, Version
-from .forms import ProductForm, VersionForm
+from .forms import ProductForm, VersionForm, ProductModeratorForm
+
+
+def is_moderator(user):
+    return (user.has_perm('catalog.can_edit_category') and user.has_perm('catalog.can_edit_description') and
+            user.has_perm('catalog.can_cancel_publication'))
 
 
 class HomeListView(ListView):
@@ -17,6 +23,8 @@ class HomeListView(ListView):
         for product in products:
             active_version = Version.objects.filter(product=product, is_current=True).first()
             product.current_version = active_version
+
+        context['is_moderator'] = is_moderator(self.request.user)
 
         return context
 
@@ -39,21 +47,21 @@ class ProductDetailView(DetailView):
     pk_url_kwarg = 'pk'
 
 
-class ProductCreateView(CreateView, LoginRequiredMixin):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Products
     form_class = ProductForm
     template_name = 'catalog/product_create.html'
     success_url = '/'
 
     def form_valid(self, form):
-        product = form.save()
-        user = self.request.user
-        product.owner = user
+        product = form.save(commit=False)
+        product.owner = self.request.user
+        product.is_published = form.cleaned_data.get('is_published', False)
         product.save()
         return super().form_valid(form)
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Products
     form_class = ProductForm
     template_name = 'catalog/product_update.html'
@@ -72,6 +80,15 @@ class ProductUpdateView(UpdateView):
             initial['version_name'] = current_version.version_name
         return initial
 
+    def get_form_class(self):
+        user = self.request.user
+        if (user.has_perm("catalog.can_edit_category") and user.has_perm("catalog.can_edit_description") and
+                user.has_perm("catalog.can_cancel_publication")):
+            return ProductModeratorForm
+        if user == self.object.owner:
+            return ProductForm
+        raise PermissionDenied
+
 
 class VersionCreateView(CreateView):
     model = Version
@@ -82,4 +99,3 @@ class VersionCreateView(CreateView):
     def form_valid(self, form):
         form.instance.product_id = self.kwargs['pk']
         return super().form_valid(form)
-

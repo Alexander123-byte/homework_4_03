@@ -9,14 +9,13 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">Создание нового продукта</div>
-
                 <div class="card-body">
                     <!-- Форма для создания продукта -->
                     <form method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form.non_field_errors }}
                         {% for field in form.visible_fields %}
-                            {% if field.name != 'version_number' and field.name != 'version_name' %}
+                            {% if field.name != 'version_number' and field.name != 'version_name' and field.name != 'is_published' %}
                                 <div class="form-group mb-3">
                                     {{ field.label_tag }}
                                     {{ field }}
@@ -33,6 +32,13 @@
                         <div class="form-group mb-3">
                             <label for="id_version_name">Название версии:</label>
                             {{ form.version_name }}
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>{{ form.is_published.label }}</label>
+                            {{ form.is_published }}
+                            {% if form.is_published.help_text %}
+                                <small class="form-text text-muted">{{ form.is_published.help_text }}</small>
+                            {% endif %}
                         </div>
                         <button type="submit" class="btn btn-primary">Создать</button>
                     </form>

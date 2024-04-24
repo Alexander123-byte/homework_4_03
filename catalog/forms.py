@@ -27,10 +27,11 @@ class VersionForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     version_number = forms.CharField(max_length=50, label='Номер версии')
     version_name = forms.CharField(max_length=100, label='Название версии')
+    is_published = forms.BooleanField(label="Опубликовать", required=False)
 
     class Meta:
         model = Products
-        fields = ['name_product', 'description_product', 'image', 'category', 'price',]
+        fields = ['name_product', 'description_product', 'image', 'category', 'price', 'is_published']
         exclude = ("owner",)
 
     def __init__(self, *args, **kwargs):
@@ -71,3 +72,9 @@ class ProductForm(forms.ModelForm):
             if word.lower() in description_product.lower():
                 raise forms.ValidationError(f"Слово '{word}' не допускается в описании.")
         return description_product
+
+
+class ProductModeratorForm(forms.ModelForm):
+    class Meta:
+        model = Products
+        fields = ['category', 'description_product', 'is_published']
