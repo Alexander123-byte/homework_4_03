@@ -13,6 +13,9 @@
     <a href="{% url 'catalog:product_create' %}">
         <button class="btn btn-lg btn-block btn-outline-primary mb-4">Создать новый продукт</button>
     </a>
+    <a href="{% url 'catalog:category_list' %}">
+        <button class="btn btn-lg btn-block btn-outline-primary mb-4">Список категорий</button>
+    </a>
     {% endif %}
     <div class="row text-center">
     {% for product in products %}

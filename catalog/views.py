@@ -2,8 +2,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView
 from django.shortcuts import render
-from .models import Products, Version
+from .models import Products, Version, Category
 from .forms import ProductForm, VersionForm, ProductModeratorForm
+from catalog.services import get_products_from_cache, get_category_from_cache
 
 
 def is_moderator(user):
@@ -15,6 +16,9 @@ class HomeListView(ListView):
     model = Products
     template_name = 'catalog/home.html'
     context_object_name = 'products'
+
+    def get_queryset(self):
+        return get_products_from_cache()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -99,3 +103,12 @@ class VersionCreateView(CreateView):
     def form_valid(self, form):
         form.instance.product_id = self.kwargs['pk']
         return super().form_valid(form)
+
+
+class CategoryListView(ListView):
+    model = Category
+    template_name = 'catalog/category_list.html'
+    context_object_name = 'categories'
+
+    def get_queryset(self):
+        return get_category_from_cache()
