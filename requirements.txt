@@ -3,3 +3,4 @@ pillow
 ipython
 pytils
 django==4.2.2
+redis
